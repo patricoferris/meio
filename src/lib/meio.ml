@@ -1,4 +1,4 @@
-module Ctf = Eio.Private.Ctf
+module Ctf = Meio_runtime_events
 
 let add_callback = Runtime_events.Callbacks.add_user_event
 
@@ -14,7 +14,7 @@ let task_events ~latency_begin ~latency_end q =
   in
   let id_event_callback d ts c ((i : Ctf.id), v) =
     match (Runtime_events.User.tag c, v) with
-    | Ctf.Created, (Ctf.Task | Ctf.Cancellation_context _) ->
+    | Meio_runtime_events.Created, (Meio_runtime_events.Task | Meio_runtime_events.Cancellation_context _) ->
         Queue.push q (`Created ((i :> int), !current_id, d, ts, v))
     | _ -> ()
   in
