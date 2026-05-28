@@ -14,8 +14,7 @@ let run (exec, args) =
     Unix.openfile Filename.null [ Unix.O_WRONLY; Unix.O_KEEPEXEC ] 0o666
   in
   let child_pid =
-    Unix.create_process_env exec argsl env Unix.stdin dev_null
-      dev_null
+    Unix.create_process_env exec argsl env Unix.stdin dev_null dev_null
   in
   Unix.sleepf 0.2;
   let handle = (tmp_dir, child_pid) in
@@ -40,18 +39,24 @@ let args =
 let run_cmd =
   let open Cmdliner.Term.Syntax in
   let doc = "Monitor Eio programs from the terminal" in
-  let man = [
-    `S Manpage.s_examples;
-    `P "If your Eio program does not take arguments, or if all the arguments\
-        are positional, run commands with `$(cmd) <executable> <arg1> <arg2> ...'";
-    `P "If your Eio program needs flags then use `--' disambiguation, e.g., `$(cmd) -- <executable> --flag1 --flag2=foo ...'";
-    `S Manpage.s_bugs;
-    `P "Send bug reports to https://github.com/tarides/meio." ]
+  let man =
+    [
+      `S Manpage.s_examples;
+      `P
+        "If your Eio program does not take arguments, or if all the \
+         argumentsare positional, run commands with `$(cmd) <executable> \
+         <arg1> <arg2> ...'";
+      `P
+        "If your Eio program needs flags then use `--' disambiguation, e.g., \
+         `$(cmd) -- <executable> --flag1 --flag2=foo ...'";
+      `S Manpage.s_bugs;
+      `P "Send bug reports to https://github.com/tarides/meio.";
+    ]
   in
-  Cmd.make (Cmd.info "meio" ~version:"%%VERSION%%" ~doc ~man) @@
+  Cmd.make (Cmd.info "meio" ~version:"%%VERSION%%" ~doc ~man)
+  @@
   let+ executable and+ args in
   run (executable, args)
 
-
-let main () = Cmd.eval run_cmd 
+let main () = Cmd.eval run_cmd
 let () = if !Sys.interactive then () else exit (main ())
