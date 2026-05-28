@@ -1,8 +1,9 @@
 open Eio
 
 let fork wait =
-  Switch.run @@ fun sw ->
+  Switch.run ~name:"deadlock" @@ fun sw ->
   Fiber.fork ~sw (fun () ->
+      Eio.traceln "Inside deadlock fork...";
       (* Also add a really big label to test the handling of that in CTF. *)
       Eio_name.name (String.make 5000 'e');
       Promise.await wait)

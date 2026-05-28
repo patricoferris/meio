@@ -155,4 +155,6 @@ let ui task =
         W.string ~attr:Notty.A.(st bold ++ fg red) "LOGS"
         :: List.map W.string task.logs
       in
-      Ui.hcat [ Ui.vcat (title :: stats :: percentiles); Ui.vcat logs ]
+      let cols = [ Ui.vcat (title :: stats :: percentiles); Ui.vcat logs ] in
+      List.map (fun ui -> Ui.resize ~w:(Ui.layout_width ui + 3) ui) cols
+      |> Ui.hcat
